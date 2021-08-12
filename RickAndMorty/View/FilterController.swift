@@ -21,11 +21,11 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
           tableView.dequeueReusableCell(withIdentifier: "filterCell") as! FilterCell
            let item = menuList[indexPath.section][indexPath.row]
            cell.categoryName.text = item
-           if item == selectedElement[indexPath.section] {
-               cell.categoryButton.isSelected = true
-           } else {
-               cell.categoryButton.isSelected = false
-           }
+//           if item == selectedElement[indexPath.section] {
+//               cell.categoryButton.isSelected = true
+//           } else {
+//               cell.categoryButton.isSelected = false
+//           }
            cell.initCellItem()
            cell.delegate = self
            return cell
@@ -47,13 +47,13 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
          headerView.addSubview(headerLabel)
 
          // code for adding button to right corner of section header
-         let showHideButton: UIButton = UIButton(frame: CGRect(x:headerView.frame.size.width - 95, y:0, width:100, height:28))
-         showHideButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-         showHideButton.setTitle("Reset", for: .normal)
-         showHideButton.setTitleColor(#colorLiteral(red: 1, green: 0.107677646, blue: 0.3452052772, alpha: 1), for: .normal)
-         showHideButton.addTarget(self, action: #selector(resetButton), for: .touchUpInside)
-        showHideButton.tag = section
-         headerView.addSubview(showHideButton)
+         let footerResetButton: UIButton = UIButton(frame: CGRect(x:headerView.frame.size.width - 95, y:0, width:100, height:28))
+        footerResetButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        footerResetButton.setTitle("Reset", for: .normal)
+        footerResetButton.setTitleColor(#colorLiteral(red: 1, green: 0.107677646, blue: 0.3452052772, alpha: 1), for: .normal)
+        footerResetButton.addTarget(self, action: #selector(resetButton), for: .touchUpInside)
+        footerResetButton.tag = section
+         headerView.addSubview(footerResetButton)
 
          return headerView
     }
@@ -107,24 +107,20 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         if let previousItem = selectedElement[section] {
             if previousItem == data {
                 selectedElement.removeValue(forKey: section)
-                print(section)
                 return
             }
         }
         selectedElement.updateValue(data, forKey: section)
     }
     @objc func resetButton(sender:UIButton) {
-        print(sender.tag)
-        selectedElement.removeValue(forKey: sender.tag)
-//        let tappedCellIndexPath = filterList.indexPath(for: FilterCell)!
-//        let indexPaths = filterList.indexPathsForVisibleRows
-//        for indexPath in indexPaths! {
-//            if indexPath.row != tappedCellIndexPath?.row && indexPath.section == tappedCellIndexPath?.section {
-//                let cell = filterList.cellForRow(at: IndexPath(row: indexPath.row, section: indexPath.section)) as! FilterCell
-//                cell.categoryButton.isSelected = false
-//                cell.categoryButton.backgroundColor = .white
-//                cell.categoryName.textColor = .white
-//            }
-//        }
+        for cell in 0...menuList[sender.tag].count-1 {
+            let indexPath: IndexPath = [sender.tag,cell]
+            if (filterList.cellForRow(at:indexPath)?.isSelected == true) {
+               let cell = filterList.cellForRow(at: indexPath) as! FilterCell
+                cell.resetButton()
+                
+            }
+            
+        }
     }
 }

@@ -43,9 +43,7 @@ class FilterCell: UITableViewCell {
         categoryName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         categoryButton.addTarget(self, action: #selector(self.radioButtonTapped), for: .touchUpInside)
     }
-    func config() {
-
-    }
+    
     @objc func radioButtonTapped(_ radioButton: UIButton) {
         print("radio button tapped")
         let isSelected = !self.categoryButton.isSelected
@@ -53,6 +51,7 @@ class FilterCell: UITableViewCell {
         if isSelected {
             categoryName.textColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
             categoryButton.backgroundColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
+            self.setSelected(true, animated: false)
             deselectOtherButton()
         }
         let tableView = self.superview as! UITableView
@@ -73,5 +72,11 @@ class FilterCell: UITableViewCell {
                 cell.categoryName.textColor = .white
             }
         }
+    }
+    func resetButton() {
+        
+        self.categoryButton.isSelected = false
+        self.categoryButton.backgroundColor = .white
+        self.categoryName.textColor = .white
     }
 }
