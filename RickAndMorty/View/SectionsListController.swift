@@ -18,8 +18,10 @@ class SectionsListController: UIViewController ,UICollectionViewDelegate,UIColle
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if characterTextField.isEditing {
+            print(viewModel.fieldCharacter.count)
             return viewModel.fieldCharacter.count
         } else {
+            print(viewModel.results.count)
              return viewModel.results.count
         }
     }
@@ -110,8 +112,10 @@ class SectionsListController: UIViewController ,UICollectionViewDelegate,UIColle
         viewModel.fetchFieldCharacter(collectionView: sectionsList)
           return true
       }
+    func reFetchWithSelectedData(elements: [Int : String]) {
+    
+    }
     @objc func filter() {
-        
         self.navigationController?.pushViewController(FilterController(), animated: true)
     }
 }

@@ -50,7 +50,6 @@ import Foundation
                     do {
                  
                         let results = try decoder.decode(Character.self, from: data)
-    
                         DispatchQueue.main.async {
                             completionHandler(results)
                         }

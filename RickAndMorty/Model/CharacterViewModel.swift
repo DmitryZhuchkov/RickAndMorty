@@ -18,7 +18,7 @@ class CharacterViewModel {
     var isLastPageForField = false
     func fetchCharacter(collectionView:UICollectionView) {        
         NetworkManager.network.fetchCharacters(page: page) { result in
-            if result.info.next == nil  {
+            if result.info.next == "null"  {
                 if self.fieldCharacter.isEmpty {
                 self.isLastPage = true
                 } else {
@@ -69,7 +69,7 @@ class CharacterViewModel {
         isLastPageForField = false
         fieldCharacter.removeAll()
         NetworkManager.network.fetchCharacters(page: nameCharac) { result in
-            if result.info.next == nil {
+            if result.info.next == "null" {
                 self.isLastPageForField = true
             } else {
                 self.fieldCharacter =  result.results
