@@ -7,19 +7,30 @@
 
 import Foundation
 import UIKit
+
+protocol FilterControllerDelegate {
+    func searchWithFilter(selected: [Int:String])
+}
+
 class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSource, FilterCellDelegate {
       
     func numberOfSections(in tableView: UITableView) -> Int {
-        return menuList.count
+        return viewModel.menuList.count
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return menuList[section].count
+        return viewModel.menuList[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:FilterCell =
           tableView.dequeueReusableCell(withIdentifier: "filterCell") as! FilterCell
-           let item = menuList[indexPath.section][indexPath.row]
+        let item = viewModel.menuList[indexPath.section][indexPath.row]
+        if !selectedItem.isEmpty {
+
+            if item == selectedItem[indexPath.section] {
+                cell.cellSelected()
+            }
+        }
            cell.categoryName.text = item
            cell.initCellItem()
            cell.delegate = self
@@ -52,11 +63,10 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
          return headerView
     }
-    var viewModel = CharacterViewModel()
-    let menuList = [ ["Alive", "Dead","Unknown"],
-    ["Female", "Male", "Genderless","unknown"] ]
-    var selectedElement = [Int : String]()
     var indexForReset: IndexPath?
+    var viewModel = FilterViewModel()
+    var delegate: FilterControllerDelegate?
+    var selectedItem = [Int:String]()
     let filterList: UITableView = {
     let tableView = UITableView()
     tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -64,6 +74,7 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
     tableView.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
     return tableView
     }()
+    
     let applyButton: UIButton = {
     let apply = UIButton()
     apply.translatesAutoresizingMaskIntoConstraints = false
@@ -77,6 +88,7 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
     apply.layer.borderColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
     return apply
     }()
+    
     override func viewDidLoad() {
         self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.08040765673, green: 0.09125102311, blue: 0.1102181301, alpha: 1)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
@@ -90,6 +102,7 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         filterList.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
         filterList.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -UIScreen.main.bounds.width/9.5).isActive = true
         
+        
         view.addSubview(applyButton)
         applyButton.topAnchor.constraint(equalTo: filterList.bottomAnchor,constant: UIScreen.main.bounds.height/9.5).isActive = true
         applyButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/12).isActive = true
@@ -101,28 +114,27 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     
     @objc func applyChanges() {
-        let nc = SectionsListController()
-        nc.reFetchWithSelectedData(elements: selectedElement)
+        delegate?.searchWithFilter(selected: selectedItem)
         navigationController?.popViewController(animated: true)
     }
     func didToggleRadioButton(_ indexPath: IndexPath) {
         let section = indexPath.section
-        let data = menuList[section][indexPath.row]
-        if let previousItem = selectedElement[section] {
+        let data = viewModel.menuList[section][indexPath.row]
+        if let previousItem = selectedItem[section] {
             if previousItem == data {
-                selectedElement.removeValue(forKey: section)
+                selectedItem.removeValue(forKey: section)
                 return
             }
         }
-        selectedElement.updateValue(data, forKey: section)
+        selectedItem.updateValue(data, forKey: section)
     }
     @objc func resetButton(sender:UIButton) {
-        for cell in 0...menuList[sender.tag].count-1 {
+        for cell in 0...viewModel.menuList[sender.tag].count-1 {
             let indexPath: IndexPath = [sender.tag,cell]
             if (filterList.cellForRow(at:indexPath)?.isSelected == true) {
                let cell = filterList.cellForRow(at: indexPath) as! FilterCell
                 cell.resetButton()
-                selectedElement.removeValue(forKey: sender.tag)
+                selectedItem.removeValue(forKey: sender.tag)
                 
             }
             

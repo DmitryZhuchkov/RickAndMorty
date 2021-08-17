@@ -31,6 +31,7 @@
 		8A5FDBBA26B7491C00B50968 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5FDBB926B7491C00B50968 /* Constant.swift */; };
 		8A9FB87926BDD52F009F7E46 /* FilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FB87826BDD52F009F7E46 /* FilterCell.swift */; };
 		8AC396A126A8B91E00CB1461 /* JsonLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC396A026A8B91E00CB1461 /* JsonLoad.swift */; };
+		8AD2967C26CAD6EF001E568D /* FilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD2967B26CAD6EF001E568D /* FilterViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 		8A5FDBB926B7491C00B50968 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		8A9FB87826BDD52F009F7E46 /* FilterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterCell.swift; sourceTree = "<group>"; };
 		8AC396A026A8B91E00CB1461 /* JsonLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonLoad.swift; sourceTree = "<group>"; };
+		8AD2967B26CAD6EF001E568D /* FilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +181,7 @@
 				8A27F6E026AB702B0019467C /* MenuViewViewModel.swift */,
 				8A22048C26AE0D5C00C8C08F /* CharacterModel.swift */,
 				8A25951726A8D3DF00687121 /* MenuModel.swift */,
+				8AD2967B26CAD6EF001E568D /* FilterViewModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 			files = (
 				8A22049A26AE118E00C8C08F /* CharacterViewViewModel.swift in Sources */,
 				8A5FDBBA26B7491C00B50968 /* Constant.swift in Sources */,
+				8AD2967C26CAD6EF001E568D /* FilterViewModel.swift in Sources */,
 				8A3D008826A8A00C008BACDC /* MenuCell.swift in Sources */,
 				8A3D004726A89965008BACDC /* MenuController.swift in Sources */,
 				8AC396A126A8B91E00CB1461 /* JsonLoad.swift in Sources */,

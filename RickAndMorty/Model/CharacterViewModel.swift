@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 class CharacterViewModel {
+    var filters = [Int : String]()
     var results: [Result] = []
     var fieldCharacter: [Result] = []
     var page = ""
@@ -16,8 +17,9 @@ class CharacterViewModel {
     var fieldName:String?
     var isLastPage = false
     var isLastPageForField = false
-    func fetchCharacter(collectionView:UICollectionView) {        
+    func fetchCharacter(collectionView:UICollectionView) {
         NetworkManager.network.fetchCharacters(page: page) { result in
+            print(result.results.count)
             if result.info.next == "null"  {
                 if self.fieldCharacter.isEmpty {
                 self.isLastPage = true
@@ -63,8 +65,9 @@ class CharacterViewModel {
         
     }
     
-    func fetchFieldCharacter(collectionView:UICollectionView) {
+    func fetchFieldCharacter(collectionView:UICollectionView,filters: String) {
         nameCharac = nameURL + (fieldName ?? "")
+        nameCharac += filters
         print(nameCharac)
         isLastPageForField = false
         fieldCharacter.removeAll()

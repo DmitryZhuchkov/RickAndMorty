@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 class SectionsListController: UIViewController ,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
+    
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
            let padding: CGFloat = 15
@@ -18,10 +19,8 @@ class SectionsListController: UIViewController ,UICollectionViewDelegate,UIColle
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if characterTextField.isEditing {
-            print(viewModel.fieldCharacter.count)
             return viewModel.fieldCharacter.count
         } else {
-            print(viewModel.results.count)
              return viewModel.results.count
         }
     }
@@ -29,7 +28,7 @@ class SectionsListController: UIViewController ,UICollectionViewDelegate,UIColle
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if characterTextField.isEditing {
         if !viewModel.isLastPageForField && indexPath.row == viewModel.fieldCharacter.count - 1 {
-            viewModel.fetchCharacter(collectionView: sectionsList )
+            viewModel.fetchFieldCharacter(collectionView: sectionsList, filters: "" )
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SectionsCell", for: indexPath) as! SectionsCell
             if let viewModelMark = viewModel.viewModelForField(at: indexPath.row) {
@@ -69,10 +68,14 @@ class SectionsListController: UIViewController ,UICollectionViewDelegate,UIColle
         field.backgroundColor = #colorLiteral(red: 0.3114243746, green: 0.3254866004, blue: 0.3514238, alpha: 1)
         return field
     }()
+    let filterController = FilterController()
     var sectionsList: UICollectionView!
     var viewModel = CharacterViewModel()
-    
+    var filterViewModel = FilterViewModel()
     override func viewDidLoad() {
+        
+        filterController.delegate = self
+        
         self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.08040765673, green: 0.09125102311, blue: 0.1102181301, alpha: 1)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
         self.navigationItem.backButtonTitle = ""
@@ -91,10 +94,10 @@ class SectionsListController: UIViewController ,UICollectionViewDelegate,UIColle
         sectionsList.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
         sectionsList.register(SectionsCell.self, forCellWithReuseIdentifier: "SectionsCell")
         sectionsList.translatesAutoresizingMaskIntoConstraints = false
-        if !viewModel.isLastPage {
-            viewModel.fetchCharacter(collectionView: sectionsList)
-        }
-        
+//        if !viewModel.isLastPage {
+//            viewModel.fetchFieldCharacter(collectionView: sectionsList, filters: "")
+//        }
+        viewModel.fetchCharacter(collectionView: sectionsList)
         view.addSubview(characterTextField)
         characterTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         characterTextField.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -109,13 +112,19 @@ class SectionsListController: UIViewController ,UICollectionViewDelegate,UIColle
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         viewModel.fieldName = textField.text
-        viewModel.fetchFieldCharacter(collectionView: sectionsList)
+        viewModel.fetchFieldCharacter(collectionView: sectionsList, filters: "")
           return true
       }
-    func reFetchWithSelectedData(elements: [Int : String]) {
-    
-    }
     @objc func filter() {
-        self.navigationController?.pushViewController(FilterController(), animated: true)
+        let vc = FilterController()
+        vc.delegate = self
+        vc.selectedItem = viewModel.filters
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+}
+extension SectionsListController: FilterControllerDelegate {
+    func searchWithFilter(selected: [Int : String]) {
+        viewModel.filters = selected
+        viewModel.fetchFieldCharacter(collectionView: sectionsList, filters: "&status=\(viewModel.filters[0] ?? "")" + "&gender=\(viewModel.filters[1] ?? "")")
     }
 }

@@ -45,7 +45,6 @@ class FilterCell: UITableViewCell {
     }
     
     @objc func radioButtonTapped(_ radioButton: UIButton) {
-        print("radio button tapped")
         let isSelected = !self.categoryButton.isSelected
         self.categoryButton.isSelected = isSelected
         if isSelected {
@@ -72,6 +71,11 @@ class FilterCell: UITableViewCell {
                 cell.categoryName.textColor = .white
             }
         }
+    }
+    func cellSelected() {
+        self.setSelected(true, animated: false)
+        categoryName.textColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
+        categoryButton.backgroundColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
     }
     func resetButton() {
         
