@@ -7,6 +7,6 @@
 
 import Foundation
 class FilterViewModel {
-    let menuList = [ ["Alive", "Dead","Unknown"],
-    ["Female", "Male", "Genderless","unknown"] ]
+    let menuList = [ ["Alive", "Dead", "Unknown"],
+                     ["Female", "Male", "Genderless", "unknown"] ]
 }

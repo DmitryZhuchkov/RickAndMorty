@@ -9,7 +9,7 @@ import Foundation
 final class CharacterViewViewModel {
     private var character: Result
     init(character: Result) {
-     self.character = character
+        self.character = character
     }
     var charac: String {
         let name = character.name
@@ -17,8 +17,8 @@ final class CharacterViewViewModel {
     }
     var imageURL: URL {
         let urlString = character.image
-         return URL(string:urlString)!
-     }
+        return URL(string: urlString)!
+    }
     var status: String {
         let status = character.status
         return status.rawValue
@@ -35,5 +35,4 @@ final class CharacterViewViewModel {
         let type = character.type
         return type
     }
-    
 }

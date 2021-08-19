@@ -15,5 +15,5 @@ target 'RickAndMorty' do
   target 'RickAndMortyUITests' do
     # Pods for testing
   end
-
+pod 'SwiftLint'
 end

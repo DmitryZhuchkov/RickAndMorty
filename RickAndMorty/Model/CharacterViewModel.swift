@@ -8,34 +8,40 @@
 import Foundation
 import UIKit
 class CharacterViewModel {
-    var filters = [Int : String]()
+    var filters = [Int: String]()
     var results: [Result] = []
     var fieldCharacter: [Result] = []
-    var page = ""
-    let nameURL = "https://rickandmortyapi.com/api/character/?name="
-    var nameCharac = "https://rickandmortyapi.com/api/character/?name="
-    var fieldName:String?
+    var page = "https://rickandmortyapi.com/api/character"
+    var nameCharac = ""
+    var fieldName: String?
     var isLastPage = false
     var isLastPageForField = false
-    func fetchCharacter(collectionView:UICollectionView) {
-        NetworkManager.network.fetchCharacters(page: page) { result in
-            print(result.results.count)
-            if result.info.next == "null"  {
+    func fetchCharacter(collectionView: UICollectionView) {
+        NetworkManager.network.fetchCharacters(page: page) { result, empty  in
+            print("6")
+            if result.info?.next == "null" {
                 if self.fieldCharacter.isEmpty {
                 self.isLastPage = true
+                    print("7")
                 } else {
+                    print("8")
                     self.isLastPageForField = true
                 }
-            } else {
-                if self.fieldCharacter.isEmpty{
-                self.results.append(contentsOf: result.results)
+            } else if empty == false {
+                if self.fieldCharacter.isEmpty {
+                    print("9")
+                    self.results.append(contentsOf: result.results ?? [])
                 } else {
-                self.fieldCharacter.append(contentsOf: result.results)
+                    print("10")
+                    self.fieldCharacter.append(contentsOf: result.results ?? [])
                 }
             }
-            self.page = result.info.next ?? "null"
-            print(self.page)
+            print("11")
+            if empty == false {
+            self.page = result.info?.next ?? "null"
+            }
             DispatchQueue.main.async {
+                print("12")
                 collectionView.reloadData()
             }
      }
@@ -54,7 +60,7 @@ class CharacterViewModel {
                }
         return CharacterViewViewModel(character: fieldCharacter[index]  )
            }
-    func navigateToSection(viewController:UIViewController,index: Int) {
+    func navigateToSection(viewController: UIViewController, index: Int) {
         let rootVC = SectionController()
         if fieldCharacter.isEmpty {
         rootVC.dataResult = results[index]
@@ -62,23 +68,28 @@ class CharacterViewModel {
         rootVC.dataResult = fieldCharacter[index]
         }
         viewController.navigationController?.pushViewController(rootVC, animated: true)
-        
     }
-    
-    func fetchFieldCharacter(collectionView:UICollectionView,filters: String) {
-        nameCharac = nameURL + (fieldName ?? "")
+    func fetchFieldCharacter(collectionView: UICollectionView, filters: String) {
+        nameCharac = Constant.shared.nameURL + (fieldName ?? "")
         nameCharac += filters
+        print("1")
         print(nameCharac)
         isLastPageForField = false
         fieldCharacter.removeAll()
-        NetworkManager.network.fetchCharacters(page: nameCharac) { result in
-            if result.info.next == "null" {
+        NetworkManager.network.fetchCharacters(page: nameCharac) { result, empty  in
+            if result.info?.next == "null" {
+                print("2")
                 self.isLastPageForField = true
-            } else {
-                self.fieldCharacter =  result.results
+            } else if empty == false {
+                print("3")
+                self.fieldCharacter =  result.results ?? []
             }
-            self.page = result.info.next ?? "null"
+            print("4")
+            if empty == false {
+            self.page = result.info?.next ?? "null"
+            }
             DispatchQueue.main.async {
+                print("5")
                 collectionView.reloadData()
             }
      }

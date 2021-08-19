@@ -30,8 +30,8 @@ class EmptyPage: UIViewController {
         view.addSubview(titleImage)
         titleImage.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         titleImage.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        titleImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: UIScreen.main.bounds.height/25).isActive = true
-        titleImage.image = UIImage(named:"rick_morty_PNG19")
+        titleImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: UIScreen.main.bounds.height/25).isActive = true
+        titleImage.image = UIImage(named: "rick_morty_PNG19")
         view.addSubview(titleText)
         titleText.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         titleText.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true

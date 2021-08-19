@@ -9,7 +9,7 @@ import Foundation
 final class MenuViewViewModel {
     private var menu: MenuModel
     init(menu: MenuModel) {
-     self.menu = menu
+        self.menu = menu
     }
     var charac: String {
         let name = menu.characters

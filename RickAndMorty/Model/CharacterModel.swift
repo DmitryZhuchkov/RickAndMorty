@@ -9,9 +9,9 @@ import Foundation
 
 // MARK: - Character
 struct Character: Codable {
-    let info: Info
-    let results: [Result]
-    enum CodingKeys: String, CodingKey{
+    let info: Info?
+    let results: [Result]?
+    enum CodingKeys: String, CodingKey {
             case info = "info"
             case results = "results"
         }
@@ -51,8 +51,6 @@ struct Location: Codable {
     let name: String
     let url: String
 }
-
-
 
 enum Status: String, Codable {
     case alive = "Alive"

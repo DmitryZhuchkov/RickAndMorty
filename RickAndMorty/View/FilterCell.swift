@@ -7,13 +7,12 @@
 
 import Foundation
 import UIKit
-protocol FilterCellDelegate {
+protocol FilterCellDelegate: class {
     func didToggleRadioButton(_ indexPath: IndexPath)
 }
 
 class FilterCell: UITableViewCell {
-    var delegate: FilterCellDelegate?
-    
+    weak var delegate: FilterCellDelegate?
     var categoryName: UILabel = {
         let section = UILabel()
         section.translatesAutoresizingMaskIntoConstraints = false
@@ -43,7 +42,6 @@ class FilterCell: UITableViewCell {
         categoryName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         categoryButton.addTarget(self, action: #selector(self.radioButtonTapped), for: .touchUpInside)
     }
-    
     @objc func radioButtonTapped(_ radioButton: UIButton) {
         let isSelected = !self.categoryButton.isSelected
         self.categoryButton.isSelected = isSelected
@@ -53,19 +51,20 @@ class FilterCell: UITableViewCell {
             self.setSelected(true, animated: false)
             deselectOtherButton()
         }
-        let tableView = self.superview as! UITableView
+        guard let tableView = self.superview as? UITableView else {
+            return }
         let tappedCellIndexPath = tableView.indexPath(for: self)!
         delegate?.didToggleRadioButton(tappedCellIndexPath)
     }
-
     func deselectOtherButton() {
-        
         let tableView = self.superview as? UITableView
         let tappedCellIndexPath = tableView?.indexPath(for: self)!
         let indexPaths = tableView?.indexPathsForVisibleRows
         for indexPath in indexPaths! {
             if indexPath.row != tappedCellIndexPath?.row && indexPath.section == tappedCellIndexPath?.section {
-                let cell = tableView?.cellForRow(at: IndexPath(row: indexPath.row, section: indexPath.section)) as! FilterCell
+                guard let cell = tableView?.cellForRow(at: IndexPath(row: indexPath.row, section: indexPath.section)) as? FilterCell else {
+                    return
+                }
                 cell.categoryButton.isSelected = false
                 cell.categoryButton.backgroundColor = .white
                 cell.categoryName.textColor = .white
@@ -78,7 +77,6 @@ class FilterCell: UITableViewCell {
         categoryButton.backgroundColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
     }
     func resetButton() {
-        
         self.categoryButton.isSelected = false
         self.categoryButton.backgroundColor = .white
         self.categoryName.textColor = .white

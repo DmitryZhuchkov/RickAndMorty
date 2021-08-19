@@ -22,7 +22,6 @@ class SectionsCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.alpha = 0.5
         view.backgroundColor = .white
-       
         return view
     }()
     var listImage: UIImageView = {
@@ -44,23 +43,20 @@ class SectionsCell: UICollectionViewCell {
         self.addSubview(listName)
         listName.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         listName.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        listName.topAnchor.constraint(equalTo: self.centerYAnchor,constant: self.bounds.width/6 ).isActive = true
+        listName.topAnchor.constraint(equalTo: self.centerYAnchor, constant: self.bounds.width/6 ).isActive = true
         listName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true
-        
         listName.text = viewModel.charac
         downloadImage(from: viewModel.imageURL)
     }
-    func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+    func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }
-    
     func downloadImage(from url: URL) {
-        getData(from: url) { data, response, error in
+        getData(from: url) { data, _, error in
             guard let data = data, error == nil else { return }
-            DispatchQueue.main.async() { [weak self] in
+            DispatchQueue.main.async { [weak self] in
                 self?.listImage.image  = UIImage(data: data)
             }
         }
