@@ -37,7 +37,7 @@ class NetworkManager {
         } else {
             return
         }
-        print(baseURL)
+        print("Fetching character - ", baseURL)
         let task = URLSession.shared.dataTask(with: URL(string: baseURL)!) { data, _, error in
             if let error = error {
                 print("Error fetching data: \(error)")

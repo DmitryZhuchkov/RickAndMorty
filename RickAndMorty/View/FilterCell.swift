@@ -32,9 +32,10 @@ class FilterCell: UITableViewCell {
     func initCellItem() {
         self.contentView.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
         self.addSubview(categoryButton)
-        categoryButton.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        categoryButton.leftAnchor.constraint(equalTo: self.leftAnchor ).isActive = true
         categoryButton.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        categoryButton.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        categoryButton.bottomAnchor.constraint(equalTo: self.bottomAnchor ).isActive = true
+        categoryButton.heightAnchor.constraint(equalTo: self.heightAnchor, constant: -5).isActive = true
         categoryButton.widthAnchor.constraint(equalTo: categoryButton.heightAnchor).isActive = true
         self.addSubview(categoryName)
         categoryName.leftAnchor.constraint(equalTo: categoryButton.rightAnchor, constant: 10).isActive = true

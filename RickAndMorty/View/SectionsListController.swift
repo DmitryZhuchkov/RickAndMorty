@@ -21,15 +21,16 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         }
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if characterTextField.isEditing {
+        if characterTextField.isEditing || viewModel.flagForFilter == true {
             if !viewModel.isLastPageForField && indexPath.row == viewModel.fieldCharacter.count - 1 {
                 viewModel.fetchCharacter(collectionView: sectionsList)
             }
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SectionsCell", for: indexPath) as? SectionsCell else {
+                print("1")
                 return SectionsCell.init()
             }
-            if let viewModelMark = viewModel.viewModelForField(at: indexPath.row) {
-                cell.config(viewModel: viewModelMark)
+            if let viewModelField = viewModel.viewModelForField(at: indexPath.row) {
+                cell.config(viewModel: viewModelField)
             }
             return cell
         } else {
@@ -62,6 +63,7 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         field.contentVerticalAlignment = UIControl.ContentVerticalAlignment.center
         field.keyboardType = .asciiCapable
         field.backgroundColor = #colorLiteral(red: 0.3114243746, green: 0.3254866004, blue: 0.3514238, alpha: 1)
+        field.clearButtonMode = .never
         return field
     }()
     let filterController = FilterController()
@@ -86,10 +88,7 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         sectionsList.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
         sectionsList.register(SectionsCell.self, forCellWithReuseIdentifier: "SectionsCell")
         sectionsList.translatesAutoresizingMaskIntoConstraints = false
-        if !viewModel.isLastPage {
-            print("!!!")
-            viewModel.fetchCharacter(collectionView: sectionsList)
-        }
+        viewModel.fetchCharacter(collectionView: sectionsList)
         view.addSubview(characterTextField)
         characterTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         characterTextField.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -103,6 +102,7 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         viewModel.fieldName = textField.text
         if !viewModel.isLastPageForField {
+        viewModel.flagForFilter = true
         viewModel.fetchFieldCharacter(collectionView: sectionsList, filters: "&status=\(viewModel.filters[0] ?? "")" + "&gender=\(viewModel.filters[1] ?? "")")
         }
         return true
@@ -117,8 +117,14 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
 extension SectionsListController: FilterControllerDelegate {
     func searchWithFilter(selected: [Int: String]) {
         viewModel.filters = selected
+        if viewModel.filters.isEmpty {
+            print("Hey")
+            viewModel.fieldCharacter.removeAll()
+            viewModel.fetchCharacter(collectionView: sectionsList)
+        }
+        viewModel.flagForFilter = true
         if !viewModel.isLastPageForField {
         viewModel.fetchFieldCharacter(collectionView: sectionsList, filters: "&status=\(viewModel.filters[0] ?? "")" + "&gender=\(viewModel.filters[1] ?? "")")
+            }
         }
-    }
 }

@@ -37,8 +37,10 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 100))
         // code for adding centered title
-        let headerLabel = UILabel(frame: CGRect(x: -headerView.frame.width/2.5, y: 0, width:
-                                                    tableView.bounds.size.width, height: 28))
+        let headerLabel = UILabel()
+        headerLabel.translatesAutoresizingMaskIntoConstraints = false
+        headerView.addSubview(headerLabel)
+        headerLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor).isActive = true
         headerLabel.textColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
         if section == 0 {
             headerLabel.text = "Status"
@@ -59,7 +61,6 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         headerView.addSubview(footerResetButton)
         return headerView
     }
-    var indexForReset: IndexPath?
     var viewModel = FilterViewModel()
     weak var delegate: FilterControllerDelegate?
     var selectedItem = [Int: String]()
@@ -90,6 +91,9 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         applyButton.addTarget(self, action: #selector(applyChanges), for: .touchUpInside)
         filterList.dataSource = self
         filterList.delegate = self
+        setupView()
+    }
+    func setupView() {
         view.addSubview(filterList)
         filterList.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         filterList.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
@@ -99,7 +103,6 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         applyButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/12).isActive = true
         applyButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -UIScreen.main.bounds.width/12).isActive = true
         applyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -UIScreen.main.bounds.height/25).isActive = true
-        self.dismiss(animated: false, completion: nil)
     }
     @objc func applyChanges() {
         delegate?.searchWithFilter(selected: selectedItem)

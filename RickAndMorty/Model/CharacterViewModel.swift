@@ -14,34 +14,28 @@ class CharacterViewModel {
     var page = "https://rickandmortyapi.com/api/character"
     var nameCharac = ""
     var fieldName: String?
+    var flagForFilter: Bool?
     var isLastPage = false
     var isLastPageForField = false
     func fetchCharacter(collectionView: UICollectionView) {
         NetworkManager.network.fetchCharacters(page: page) { result, empty  in
-            print("6")
             if result.info?.next == "null" {
                 if self.fieldCharacter.isEmpty {
                 self.isLastPage = true
-                    print("7")
                 } else {
-                    print("8")
                     self.isLastPageForField = true
                 }
             } else if empty == false {
                 if self.fieldCharacter.isEmpty {
-                    print("9")
                     self.results.append(contentsOf: result.results ?? [])
                 } else {
-                    print("10")
                     self.fieldCharacter.append(contentsOf: result.results ?? [])
                 }
             }
-            print("11")
             if empty == false {
             self.page = result.info?.next ?? "null"
             }
             DispatchQueue.main.async {
-                print("12")
                 collectionView.reloadData()
             }
      }
@@ -72,24 +66,20 @@ class CharacterViewModel {
     func fetchFieldCharacter(collectionView: UICollectionView, filters: String) {
         nameCharac = Constant.shared.nameURL + (fieldName ?? "")
         nameCharac += filters
-        print("1")
-        print(nameCharac)
+        print("fieldCharacter - ",nameCharac)
         isLastPageForField = false
         fieldCharacter.removeAll()
         NetworkManager.network.fetchCharacters(page: nameCharac) { result, empty  in
             if result.info?.next == "null" {
-                print("2")
                 self.isLastPageForField = true
             } else if empty == false {
-                print("3")
                 self.fieldCharacter =  result.results ?? []
             }
-            print("4")
             if empty == false {
             self.page = result.info?.next ?? "null"
             }
             DispatchQueue.main.async {
-                print("5")
+
                 collectionView.reloadData()
             }
      }
