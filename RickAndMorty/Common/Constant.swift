@@ -8,5 +8,5 @@
 import Foundation
 final class Constant {
     static let shared = Constant()
-    let nameURL = "https://rickandmortyapi.com/api/character/?name="
+    let nameURL = "https://rickandmortyapi.com/api/character"
 }

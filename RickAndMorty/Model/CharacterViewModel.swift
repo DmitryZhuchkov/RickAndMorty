@@ -11,24 +11,27 @@ class CharacterViewModel {
     var filters = [Int: String]()
     var results: [Result] = []
     var fieldCharacter: [Result] = []
-    var page = "https://rickandmortyapi.com/api/character"
+    var page = ""
     var nameCharac = ""
     var fieldName: String?
     var flagForFilter: Bool?
     var isLastPage = false
     var isLastPageForField = false
+    var fetchingWithFilter: Bool = false
     func fetchCharacter(collectionView: UICollectionView) {
+        print(page, "!!!!!")
         NetworkManager.network.fetchCharacters(page: page) { result, empty  in
             if result.info?.next == "null" {
-                if self.fieldCharacter.isEmpty {
+                if self.fetchingWithFilter == false {
                 self.isLastPage = true
                 } else {
                     self.isLastPageForField = true
                 }
             } else if empty == false {
-                if self.fieldCharacter.isEmpty {
+                if self.fetchingWithFilter == false {
                     self.results.append(contentsOf: result.results ?? [])
                 } else {
+                    print("!!!")
                     self.fieldCharacter.append(contentsOf: result.results ?? [])
                 }
             }
@@ -63,25 +66,38 @@ class CharacterViewModel {
         }
         viewController.navigationController?.pushViewController(rootVC, animated: true)
     }
-    func fetchFieldCharacter(collectionView: UICollectionView, filters: String) {
-        nameCharac = Constant.shared.nameURL + (fieldName ?? "")
-        nameCharac += filters
-        print("fieldCharacter - ",nameCharac)
-        isLastPageForField = false
-        fieldCharacter.removeAll()
-        NetworkManager.network.fetchCharacters(page: nameCharac) { result, empty  in
-            if result.info?.next == "null" {
-                self.isLastPageForField = true
-            } else if empty == false {
-                self.fieldCharacter =  result.results ?? []
+    func searchForFieldAndFilter(for collectionView: UICollectionView) {
+           if fieldName != "" {
+            fetchingWithFilter = true
+            var searchUrl: String = ""
+            if let field = fieldName {
+            searchUrl = Constant.shared.nameURL + "/?name="  + field.replacingOccurrences(of: " ", with: "%20")
+            } else {
+            searchUrl = Constant.shared.nameURL + "/?name="
             }
-            if empty == false {
-            self.page = result.info?.next ?? "null"
+            if !filters.isEmpty {
+                searchUrl += "&" + urlWithFilters()
             }
-            DispatchQueue.main.async {
-
-                collectionView.reloadData()
-            }
-     }
+            page = searchUrl
+            self.fieldCharacter.removeAll()
+            fetchCharacter(collectionView: collectionView)
+        } else {
+            fetchingWithFilter = false
+        }
+    }
+    func urlWithFilters() -> String {
+        var statusString = ""
+        var genderString = ""
+        if let status = filters[0] {
+            statusString = "status=" + status
+        } else {
+             statusString = ""
+        }
+        if let gender = filters[1] {
+            genderString = "gender=" + gender
+        } else {
+            genderString = ""
+        }
+        return "&" + statusString + "&" + genderString
     }
 }

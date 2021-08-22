@@ -14,14 +14,14 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         return CGSize(width: collectionViewSize/2, height: collectionViewSize/2)
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if characterTextField.isEditing {
+        if !viewModel.fieldCharacter.isEmpty {
             return viewModel.fieldCharacter.count
         } else {
             return viewModel.results.count
         }
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if characterTextField.isEditing || viewModel.flagForFilter == true {
+        if characterTextField.isEditing || viewModel.fetchingWithFilter == true {
             if !viewModel.isLastPageForField && indexPath.row == viewModel.fieldCharacter.count - 1 {
                 viewModel.fetchCharacter(collectionView: sectionsList)
             }
@@ -64,13 +64,17 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         field.keyboardType = .asciiCapable
         field.backgroundColor = #colorLiteral(red: 0.3114243746, green: 0.3254866004, blue: 0.3514238, alpha: 1)
         field.clearButtonMode = .never
+        field.resignFirstResponder()
         return field
     }()
     let filterController = FilterController()
+    var baseURL: String?
     var sectionsList: UICollectionView!
     var viewModel = CharacterViewModel()
     var filterViewModel = FilterViewModel()
     override func viewDidLoad() {
+
+        viewModel.page = baseURL ?? " "
         filterController.delegate = self
         self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.08040765673, green: 0.09125102311, blue: 0.1102181301, alpha: 1)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
@@ -101,10 +105,7 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
     }
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         viewModel.fieldName = textField.text
-        if !viewModel.isLastPageForField {
-        viewModel.flagForFilter = true
-        viewModel.fetchFieldCharacter(collectionView: sectionsList, filters: "&status=\(viewModel.filters[0] ?? "")" + "&gender=\(viewModel.filters[1] ?? "")")
-        }
+        viewModel.searchForFieldAndFilter(for: sectionsList)
         return true
     }
     @objc func filter() {
@@ -117,14 +118,8 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
 extension SectionsListController: FilterControllerDelegate {
     func searchWithFilter(selected: [Int: String]) {
         viewModel.filters = selected
-        if viewModel.filters.isEmpty {
-            print("Hey")
-            viewModel.fieldCharacter.removeAll()
-            viewModel.fetchCharacter(collectionView: sectionsList)
-        }
-        viewModel.flagForFilter = true
         if !viewModel.isLastPageForField {
-        viewModel.fetchFieldCharacter(collectionView: sectionsList, filters: "&status=\(viewModel.filters[0] ?? "")" + "&gender=\(viewModel.filters[1] ?? "")")
+        viewModel.searchForFieldAndFilter(for: sectionsList)
             }
         }
 }

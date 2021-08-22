@@ -43,7 +43,10 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
         switch cell.sectionName.text {
         case "characters":
-            viewModel.navigateToList(viewController: self, secName: "characters", rootVC: SectionsListController())
+            let nextVC = SectionsListController()
+            print(viewModel.data[indexPath.row].characters)
+            nextVC.baseURL = viewModel.data[indexPath.row].characters
+            viewModel.navigateToList(viewController: self, secName: "characters", rootVC: nextVC)
         default:
             viewModel.navigateToList(viewController: self, secName: cell.sectionName.text ?? "unknow", rootVC: EmptyPage())
         }
