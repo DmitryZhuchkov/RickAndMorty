@@ -52,13 +52,13 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         headerLabel.textAlignment = .center
         headerView.addSubview(headerLabel)
         // code for adding button to right corner of section header
-        let footerResetButton: UIButton = UIButton(frame: CGRect(x: headerView.frame.size.width - 95, y: 0, width: 100, height: 28))
-        footerResetButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        footerResetButton.setTitle("Reset", for: .normal)
-        footerResetButton.setTitleColor(#colorLiteral(red: 1, green: 0.107677646, blue: 0.3452052772, alpha: 1), for: .normal)
-        footerResetButton.addTarget(self, action: #selector(resetButton), for: .touchUpInside)
-        footerResetButton.tag = section
-        headerView.addSubview(footerResetButton)
+        let headerResetButton: UIButton = UIButton(frame: CGRect(x: headerView.frame.size.width - 95, y: 0, width: 100, height: 28))
+        headerResetButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        headerResetButton.setTitle("Reset", for: .normal)
+        headerResetButton.setTitleColor(#colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1), for: .normal)
+        headerResetButton.addTarget(self, action: #selector(resetButton), for: .touchUpInside)
+        headerResetButton.tag = section
+        headerView.addSubview(headerResetButton)
         return headerView
     }
     var viewModel = FilterViewModel()

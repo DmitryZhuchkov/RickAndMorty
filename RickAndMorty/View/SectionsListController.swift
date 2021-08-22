@@ -14,26 +14,9 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         return CGSize(width: collectionViewSize/2, height: collectionViewSize/2)
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if !viewModel.fieldCharacter.isEmpty {
-            return viewModel.fieldCharacter.count
-        } else {
             return viewModel.results.count
-        }
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if characterTextField.isEditing || viewModel.fetchingWithFilter == true {
-            if !viewModel.isLastPageForField && indexPath.row == viewModel.fieldCharacter.count - 1 {
-                viewModel.fetchCharacter(collectionView: sectionsList)
-            }
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SectionsCell", for: indexPath) as? SectionsCell else {
-                print("1")
-                return SectionsCell.init()
-            }
-            if let viewModelField = viewModel.viewModelForField(at: indexPath.row) {
-                cell.config(viewModel: viewModelField)
-            }
-            return cell
-        } else {
             if !viewModel.isLastPage && indexPath.row == viewModel.results.count - 1 {
                 viewModel.fetchCharacter(collectionView: sectionsList)
             }
@@ -44,7 +27,6 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
                 cell.config(viewModel: viewModelMark)
             }
             return cell
-        }
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         viewModel.navigateToSection(viewController: self, index: indexPath.row)
@@ -73,7 +55,6 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
     var viewModel = CharacterViewModel()
     var filterViewModel = FilterViewModel()
     override func viewDidLoad() {
-
         viewModel.page = baseURL ?? " "
         filterController.delegate = self
         self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.08040765673, green: 0.09125102311, blue: 0.1102181301, alpha: 1)
@@ -104,8 +85,15 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         sectionsList.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        viewModel.fieldName = textField.text
-        viewModel.searchForFieldAndFilter(for: sectionsList)
+        if let text = textField.text,
+                 let textRange = Range(range, in: text) {
+                 if string == "\n" {
+                 viewModel.fieldName = text.replacingCharacters(in: textRange, with: "")
+                 } else {
+                    viewModel.fieldName = text.replacingCharacters(in: textRange, with: string)
+                 }
+                 viewModel.searchForFieldAndFilter(for: sectionsList)
+              }
         return true
     }
     @objc func filter() {
@@ -118,8 +106,6 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
 extension SectionsListController: FilterControllerDelegate {
     func searchWithFilter(selected: [Int: String]) {
         viewModel.filters = selected
-        if !viewModel.isLastPageForField {
         viewModel.searchForFieldAndFilter(for: sectionsList)
-            }
         }
 }

@@ -14,26 +14,14 @@ class CharacterViewModel {
     var page = ""
     var nameCharac = ""
     var fieldName: String?
-    var flagForFilter: Bool?
     var isLastPage = false
-    var isLastPageForField = false
-    var fetchingWithFilter: Bool = false
     func fetchCharacter(collectionView: UICollectionView) {
-        print(page, "!!!!!")
         NetworkManager.network.fetchCharacters(page: page) { result, empty  in
             if result.info?.next == "null" {
-                if self.fetchingWithFilter == false {
                 self.isLastPage = true
-                } else {
-                    self.isLastPageForField = true
-                }
             } else if empty == false {
-                if self.fetchingWithFilter == false {
+
                     self.results.append(contentsOf: result.results ?? [])
-                } else {
-                    print("!!!")
-                    self.fieldCharacter.append(contentsOf: result.results ?? [])
-                }
             }
             if empty == false {
             self.page = result.info?.next ?? "null"
@@ -50,25 +38,13 @@ class CharacterViewModel {
                }
         return CharacterViewViewModel(character: results[index]  )
            }
-    // MARK: Data checking
-       func viewModelForField(at index: Int) -> CharacterViewViewModel? {
-        guard index < fieldCharacter.count else {
-                   return nil
-               }
-        return CharacterViewViewModel(character: fieldCharacter[index]  )
-           }
     func navigateToSection(viewController: UIViewController, index: Int) {
         let rootVC = SectionController()
-        if fieldCharacter.isEmpty {
         rootVC.dataResult = results[index]
-        } else {
-        rootVC.dataResult = fieldCharacter[index]
-        }
         viewController.navigationController?.pushViewController(rootVC, animated: true)
     }
     func searchForFieldAndFilter(for collectionView: UICollectionView) {
            if fieldName != "" {
-            fetchingWithFilter = true
             var searchUrl: String = ""
             if let field = fieldName {
             searchUrl = Constant.shared.nameURL + "/?name="  + field.replacingOccurrences(of: " ", with: "%20")
@@ -79,10 +55,9 @@ class CharacterViewModel {
                 searchUrl += "&" + urlWithFilters()
             }
             page = searchUrl
-            self.fieldCharacter.removeAll()
+            self.results.removeAll()
             fetchCharacter(collectionView: collectionView)
-        } else {
-            fetchingWithFilter = false
+        } else if fieldName == " " {
         }
     }
     func urlWithFilters() -> String {
