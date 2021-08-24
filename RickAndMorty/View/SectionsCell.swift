@@ -48,7 +48,6 @@ class SectionsCell: UICollectionViewCell {
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true
         listName.text = viewModel.charac
-//        print("ViewModel - ", viewModel.charac, "Cell -", listName.text)
         downloadImage(from: viewModel.imageURL)
     }
     func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {

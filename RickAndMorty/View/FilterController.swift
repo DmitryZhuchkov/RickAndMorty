@@ -35,30 +35,16 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         return cell
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 100))
-        // code for adding centered title
-        let headerLabel = UILabel()
-        headerLabel.translatesAutoresizingMaskIntoConstraints = false
-        headerView.addSubview(headerLabel)
-        headerLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor).isActive = true
-        headerLabel.textColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
-        if section == 0 {
-            headerLabel.text = "Status"
+        guard let headerView: FilterHeader = tableView.dequeueReusableHeaderFooterView(withIdentifier: "FilterHeader") as? FilterHeader else {
+            return FilterHeader.init()
         }
-        if section == 1 {
-            headerLabel.text =  "Gender"
+        headerView.config(section: section)
+        if !(selectedItem[section]?.isEmpty ?? true) {
+            headerView.headerButton.setTitleColor(#colorLiteral(red: 0.9664108157, green: 0.1161905304, blue: 0.3387114406, alpha: 1), for: .normal)
+        } else {
+            headerView.headerButton.setTitleColor(#colorLiteral(red: 0.6630952358, green: 0.1576670706, blue: 0.2806080878, alpha: 1), for: .normal)
         }
-        headerLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        headerLabel.textAlignment = .center
-        headerView.addSubview(headerLabel)
-        // code for adding button to right corner of section header
-        let headerResetButton: UIButton = UIButton(frame: CGRect(x: headerView.frame.size.width - 95, y: 0, width: 100, height: 28))
-        headerResetButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        headerResetButton.setTitle("Reset", for: .normal)
-        headerResetButton.setTitleColor(#colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1), for: .normal)
-        headerResetButton.addTarget(self, action: #selector(resetButton), for: .touchUpInside)
-        headerResetButton.tag = section
-        headerView.addSubview(headerResetButton)
+        headerView.delegate = self
         return headerView
     }
     var viewModel = FilterViewModel()
@@ -85,12 +71,13 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         return apply
     }()
     override func viewDidLoad() {
-        self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.08040765673, green: 0.09125102311, blue: 0.1102181301, alpha: 1)
+        self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
         self.view.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
         applyButton.addTarget(self, action: #selector(applyChanges), for: .touchUpInside)
         filterList.dataSource = self
         filterList.delegate = self
+        filterList.register(FilterHeader.self, forHeaderFooterViewReuseIdentifier: "FilterHeader")
         setupView()
     }
     func setupView() {
@@ -110,24 +97,33 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     func didToggleRadioButton(_ indexPath: IndexPath) {
         let section = indexPath.section
+        guard let header = filterList.headerView(forSection: section) as? FilterHeader else {
+        return
+        }
         let data = viewModel.menuList[section][indexPath.row]
         if let previousItem = selectedItem[section] {
             if previousItem == data {
                 selectedItem.removeValue(forKey: section)
-                return
             }
         }
         selectedItem.updateValue(data, forKey: section)
+        header.headerButton.setTitleColor(#colorLiteral(red: 0.9664108157, green: 0.1161905304, blue: 0.3387114406, alpha: 1), for: .normal)
     }
-    @objc func resetButton(sender: UIButton) {
-        for cell in 0...viewModel.menuList[sender.tag].count-1 {
-            let indexPath: IndexPath = [sender.tag, cell]
-            if filterList.cellForRow(at: indexPath)?.isSelected == true {
-                guard let cell = filterList.cellForRow(at: indexPath) as? FilterCell else {
-                    return
-                }
+}
+extension FilterController: FilterHeaderDelegate {
+    func resetButton(tag: Int) {
+        for cell in 0...viewModel.menuList[tag].count-1 {
+            let indexPath: IndexPath = [tag, cell]
+            guard let header = filterList.headerView(forSection: tag) as? FilterHeader else {
+            return
+            }
+            guard let cell = filterList.cellForRow(at: indexPath) as? FilterCell else {
+                return
+            }
+            if cell.categoryName.text == selectedItem[tag] {
                 cell.resetButton()
-                selectedItem.removeValue(forKey: sender.tag)
+                selectedItem.removeValue(forKey: tag)
+                header.headerButton.setTitleColor(#colorLiteral(red: 0.6630952358, green: 0.1576670706, blue: 0.2806080878, alpha: 1), for: .normal)
             }
         }
     }
