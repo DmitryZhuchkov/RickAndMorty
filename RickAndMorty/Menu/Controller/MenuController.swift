@@ -13,7 +13,12 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: UIScreen.main.bounds.width - UIScreen.main.bounds.width/10, height: UIScreen.main.bounds.width/2)
+        switch UIScreen.main.bounds.height {
+        case 0...499:
+            return CGSize(width: UIScreen.main.bounds.width - UIScreen.main.bounds.width/10, height: UIScreen.main.bounds.width/2)
+        default:
+            return CGSize(width: UIScreen.main.bounds.width - UIScreen.main.bounds.width/10, height: UIScreen.main.bounds.height/3.5)
+        }
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 3
@@ -23,6 +28,7 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
             return MenuCell.init()
         }
         if let viewModelMark = viewModel.viewModelForMark(at: indexPath.row) {
+            print(indexPath.row)
             switch indexPath.row {
             case 0:
                 cell.index = 1
@@ -42,24 +48,20 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
             return
         }
         switch cell.sectionName.text {
-        case "characters":
+        case "Characters":
             let nextVC = SectionsListController()
             print(viewModel.data[indexPath.row].characters)
             nextVC.baseURL = viewModel.data[indexPath.row].characters
-            viewModel.navigateToList(viewController: self, secName: "characters", rootVC: nextVC)
+            viewModel.navigateToList(viewController: self, secName: "Characters", rootVC: nextVC)
         default:
-            viewModel.navigateToList(viewController: self, secName: cell.sectionName.text ?? "unknow", rootVC: EmptyPage())
+            viewModel.navigateToList(viewController: self, secName: cell.sectionName.text ?? "Unknow", rootVC: EmptyPage())
         }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Choose section"
-        self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
         self.navigationItem.backButtonTitle = ""
         self.view.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        self.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
         // MARK: CollectionView layout init
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical

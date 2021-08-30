@@ -7,26 +7,8 @@
 
 import Foundation
 import UIKit
-class SectionController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataResult?.episode.count ?? 0
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        let cellText = dataResult?.episode[indexPath.row].replacingOccurrences(of: "https://rickandmortyapi.com/api/episode/", with: "episode number: ")
-        cell.textLabel?.text = cellText
-        cell.contentView.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        return cell
-    }
+class SectionController: UIViewController {
     var dataResult: Result?
-    let episodesList: UITableView = {
-        let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        return tableView
-    }()
     var persImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -49,14 +31,14 @@ class SectionController: UIViewController, UITableViewDelegate, UITableViewDataS
         }()
         return caterogyLabel
     }
+    let scrollView = UIScrollView()
+    let contentView = UIView()
     override func viewDidLoad() {
         self.title = dataResult?.name
         self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
         self.view.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        // MARK: Table view init
-        episodesList.dataSource = self
-        episodesList.delegate = self
+        setupScrollView()
         setupView()
         if  let imagePers = dataResult?.image {
             downloadImage(from: URL(string: imagePers)!)
@@ -68,37 +50,46 @@ class SectionController: UIViewController, UITableViewDelegate, UITableViewDataS
         let species = characterAttributesLabel(name: "species", category: dataResult?.species ?? " ")
         let gender = characterAttributesLabel(name: "gender", category: dataResult?.gender.rawValue ?? " ")
         let type = characterAttributesLabel(name: "type", category: dataResult?.type ?? " ")
-        view.addSubview(persImage)
-        persImage.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
-        persImage.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -UIScreen.main.bounds.width/9.5).isActive = true
-        persImage.bottomAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        persImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        view.addSubview(name)
-        name.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 5).isActive = true
-        name.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
+        contentView.addSubview(persImage)
+        persImage.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
+        persImage.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -UIScreen.main.bounds.width/9.5).isActive = true
+        persImage.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor).isActive = true
+        persImage.widthAnchor.constraint(equalTo: persImage.heightAnchor).isActive = true
+        contentView.addSubview(name)
+        name.topAnchor.constraint(equalTo: persImage.bottomAnchor, constant: 5).isActive = true
+        name.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
         name.rightAnchor.constraint(equalTo: persImage.rightAnchor).isActive = true
-        view.addSubview(status)
+        contentView.addSubview(status)
         status.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 5).isActive = true
-        status.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
+        status.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
         status.rightAnchor.constraint(equalTo: persImage.rightAnchor).isActive = true
-        view.addSubview(species)
+        contentView.addSubview(species)
         species.topAnchor.constraint(equalTo: status.bottomAnchor, constant: 5).isActive = true
-        species.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
+        species.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
         species.rightAnchor.constraint(equalTo: persImage.rightAnchor).isActive = true
-        view.addSubview(gender)
+        contentView.addSubview(gender)
         gender.topAnchor.constraint(equalTo: species.bottomAnchor, constant: 5).isActive = true
-        gender.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
+        gender.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
         gender.rightAnchor.constraint(equalTo: persImage.rightAnchor).isActive = true
-        view.addSubview(type)
+        contentView.addSubview(type)
         type.topAnchor.constraint(equalTo: gender.bottomAnchor, constant: 5).isActive = true
-        type.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
+        type.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
         type.rightAnchor.constraint(equalTo: persImage.rightAnchor).isActive = true
-        view.addSubview(episodesList)
-        episodesList.topAnchor.constraint(equalTo: type.bottomAnchor, constant: 5).isActive = true
-        episodesList.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
-        episodesList.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -UIScreen.main.bounds.width/9.5).isActive = true
-        episodesList.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 5).isActive = true
-        episodesList.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        type.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+    }
+    func setupScrollView() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        scrollView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        scrollView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+        contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor).isActive = true
+        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
     }
     func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         URLSession.shared.dataTask(with: url, completionHandler: completion).resume()

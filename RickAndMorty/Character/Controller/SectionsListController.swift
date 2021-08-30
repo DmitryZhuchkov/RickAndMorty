@@ -9,9 +9,15 @@ import Foundation
 import UIKit
 class SectionsListController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let padding: CGFloat = 15
-        let collectionViewSize = collectionView.frame.size.width - padding
-        return CGSize(width: collectionViewSize/2, height: collectionViewSize/2)
+        let deviceSize = UIScreen.main.bounds.size
+        if deviceSize.height < deviceSize.width {
+               let cellSize = sqrt(Double(deviceSize.width * deviceSize.height) / (Double(15)))
+                   return CGSize(width: cellSize, height: cellSize)
+        } else {
+            let padding: CGFloat = 15
+            let collectionViewSize = deviceSize.width - padding
+                    return CGSize(width: collectionViewSize/2, height: collectionViewSize/2)
+        }
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             return viewModel.results.count
@@ -55,7 +61,7 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
     var viewModel = CharacterViewModel()
     var filterViewModel = FilterViewModel()
     override func viewDidLoad() {
-        viewModel.page = baseURL ?? " "
+        viewModel.characterURL = baseURL ?? " "
         filterController.delegate = self
         self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
@@ -73,7 +79,10 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         sectionsList.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
         sectionsList.register(SectionsCell.self, forCellWithReuseIdentifier: "SectionsCell")
         sectionsList.translatesAutoresizingMaskIntoConstraints = false
-        viewModel.fetchCharacter(collectionView: sectionsList)
+        viewModel.searchForFieldAndFilter(collectionView: sectionsList)
+        setupView()
+    }
+    func setupView() {
         view.addSubview(characterTextField)
         characterTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         characterTextField.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -88,11 +97,11 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         if let text = textField.text,
                  let textRange = Range(range, in: text) {
                  if string == "\n" {
-                 viewModel.fieldName = text.replacingCharacters(in: textRange, with: "")
+                 viewModel.fieldName = text.replacingCharacters(in: textRange, with: " ")
                  } else {
                     viewModel.fieldName = text.replacingCharacters(in: textRange, with: string)
                  }
-                 viewModel.searchForFieldAndFilter(for: sectionsList)
+                 viewModel.searchForFieldAndFilter(collectionView: sectionsList)
               }
         return true
     }
@@ -106,6 +115,6 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
 extension SectionsListController: FilterControllerDelegate {
     func searchWithFilter(selected: [Int: String]) {
         viewModel.filters = selected
-        viewModel.searchForFieldAndFilter(for: sectionsList)
+        viewModel.searchForFieldAndFilter(collectionView: sectionsList)
         }
 }

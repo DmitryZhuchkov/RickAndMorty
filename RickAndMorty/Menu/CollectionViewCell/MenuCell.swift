@@ -39,16 +39,16 @@ class MenuCell: UICollectionViewCell {
         sectionName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         switch index {
         case 1:
-            sectionName.text = "characters"
+            sectionName.text = "Characters"
             sectionImage.image = UIImage(named: "rick-and-morty-lede-1300x813")
         case 2:
-            sectionName.text = "locations"
+            sectionName.text = "Locations"
             sectionImage.image = UIImage(named: "rick-and-morty-screaming-sun-1024x475")
         case 3:
-            sectionName.text = "episodes"
+            sectionName.text = "Episodes"
             sectionImage.image = UIImage(named: "2_1911181156166-rickandmorty_403_dup-20191115")
         default:
-            sectionName.text = "unknown"
+            sectionName.text = "Unknown"
             sectionImage.image = UIImage(named: "rick_morty_PNG19")
         }
     }

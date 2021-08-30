@@ -10,7 +10,7 @@ class NetworkManager {
     static let network = NetworkManager()
     var emptyResult: Character?
     func fetchMenu(completionHandler: @escaping (_ response: MenuModel) -> Void) {
-        let baseURL = URL(string: "https://rickandmortyapi.com/api")!
+        let baseURL = URL(string: Constant.shared.baseURL)!
         let task = URLSession.shared.dataTask(with: baseURL) { data, _, error in
             if let error = error {
                 print("Error fetching data: \(error)")
@@ -31,14 +31,8 @@ class NetworkManager {
         task.resume()
     }
     func fetchCharacters(page: String = "", completionHandler: @escaping (_ response: Character, _ isEmpty: Bool) -> Void) {
-        var baseURL = "https://rickandmortyapi.com/api/character"
-        if page != "" && page != "null" {
-            baseURL = page
-        } else {
-            return
-        }
-        print("Fetching character - ", baseURL)
-        let task = URLSession.shared.dataTask(with: URL(string: baseURL)!) { data, _, error in
+        print("Fetching character - ", page)
+        let task = URLSession.shared.dataTask(with: URL(string: page)!) { data, _, error in
             if let error = error {
                 print("Error fetching data: \(error)")
                 DispatchQueue.main.async {

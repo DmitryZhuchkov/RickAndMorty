@@ -30,6 +30,8 @@ class SectionsCell: UICollectionViewCell {
         return image
     }()
     func config(viewModel: CharacterViewViewModel) {
+        listName.text = viewModel.charac
+        downloadImage(from: viewModel.imageURL)
         self.addSubview(listImage)
         listImage.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         listImage.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
@@ -47,17 +49,17 @@ class SectionsCell: UICollectionViewCell {
         listName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true
-        listName.text = viewModel.charac
-        downloadImage(from: viewModel.imageURL)
     }
     func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }
     func downloadImage(from url: URL) {
         getData(from: url) { data, _, error in
-            guard let data = data, error == nil else { return }
-            DispatchQueue.main.async { [weak self] in
-                self?.listImage.image  = UIImage(data: data)
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                guard let data = data, error == nil else { return }
+                DispatchQueue.main.async {
+                    self?.listImage.image  = UIImage(data: data)
+                }
             }
         }
     }

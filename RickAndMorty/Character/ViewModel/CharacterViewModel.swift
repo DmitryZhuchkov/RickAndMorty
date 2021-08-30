@@ -12,6 +12,7 @@ class CharacterViewModel {
     var results: [Result] = []
     var fieldCharacter: [Result] = []
     var page = ""
+    var characterURL = ""
     var nameCharac = ""
     var fieldName: String?
     var isLastPage = false
@@ -43,13 +44,13 @@ class CharacterViewModel {
         rootVC.dataResult = results[index]
         viewController.navigationController?.pushViewController(rootVC, animated: true)
     }
-    func searchForFieldAndFilter(for collectionView: UICollectionView) {
+    func searchForFieldAndFilter(collectionView: UICollectionView) {
            if fieldName != "" {
             var searchUrl: String = ""
             if let field = fieldName {
-            searchUrl = Constant.shared.nameURL + "/?name="  + field.replacingOccurrences(of: " ", with: "%20")
+            searchUrl = characterURL + "/?name="  + field.replacingOccurrences(of: " ", with: "%20")
             } else {
-            searchUrl = Constant.shared.nameURL + "/?name="
+            searchUrl = characterURL + "/?name="
             }
             if !filters.isEmpty {
                 searchUrl += "&" + urlWithFilters()

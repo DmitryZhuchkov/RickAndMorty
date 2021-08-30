@@ -13,7 +13,7 @@ class ButtonView: UIButton {
     super.layoutSubviews()
     self.setup()
   }
-  // MARK: Circle image settings
+  // MARK: Circle button settings
   func setup() {
     self.layer.cornerRadius = self.frame.height/2
     self.layer.masksToBounds = true

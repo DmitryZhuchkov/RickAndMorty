@@ -20,6 +20,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
                        window?.windowScene = windowScene
                        let navigatonController = UINavigationController(rootViewController: MenuController())
+                       navigatonController.navigationBar.setBackgroundImage(UIImage(), for: .default)
+                       navigatonController.navigationBar.shadowImage = UIImage()
+                       navigatonController.navigationBar.layoutIfNeeded()
+                       navigatonController.navigationBar.barTintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+                       navigatonController.navigationBar.isTranslucent = false
+                       navigatonController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
+                       navigatonController.navigationBar.tintColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
                        window?.rootViewController = navigatonController
                        window?.makeKeyAndVisible()
     }
