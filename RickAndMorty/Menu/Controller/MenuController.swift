@@ -54,6 +54,7 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
             viewModel.navigateToList(viewController: self, secName: cell.sectionName.text ?? "Unknow", rootVC: EmptyPage())
         }
     }
+    var refreshControl = UIRefreshControl()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Choose section"
@@ -76,5 +77,51 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
         menuCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         menuCollectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         viewModel.fetchMenu(collectionView: menuCollectionView)
+        addRefreshControl()
     }
+    func addRefreshControl() {
+        guard let customView = Bundle.main.loadNibNamed("RefreshControlPickleRick", owner: nil, options: nil) else {
+            return
+        }
+        guard let refreshView = customView[0] as? UIView else {
+            return
+        }
+        refreshView.frame = refreshControl.frame
+
+        refreshControl.addSubview(refreshView)
+        refreshControl.tintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        refreshControl.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        refreshControl.addTarget(self, action: #selector(refreshContents), for: .valueChanged)
+        refreshView.tag = 12052018
+        if #available(iOS 10.0, *) {
+            menuCollectionView.refreshControl = refreshControl
+        } else {
+            menuCollectionView.addSubview(refreshControl)
+        }
+    }
+    @objc func refreshContents() {
+        let refreshView = refreshControl.viewWithTag(12052018)
+               for views in (refreshView?.subviews)! {
+                       if let pickleImage = views as? UIImageView {
+                           rotate(image: pickleImage)
+                       }
+               }
+        self.perform(#selector(finishedRefreshing))
+        }
+      @objc func finishedRefreshing() {
+        DispatchQueue.global(qos: .background).async {
+            self.viewModel.fetchMenu(collectionView: self.menuCollectionView)
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
+            }
+        }
+      }
+    func rotate(image: UIImageView) {
+            let rotation: CABasicAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
+            rotation.toValue = NSNumber(value: Double.pi * 2)
+            rotation.duration = 1
+            rotation.isCumulative = true
+            rotation.repeatCount = Float.greatestFiniteMagnitude
+            image.layer.add(rotation, forKey: "rotationAnimation")
+        }
 }
