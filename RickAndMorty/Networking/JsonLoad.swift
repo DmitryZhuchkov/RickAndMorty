@@ -31,7 +31,6 @@ class NetworkManager {
         task.resume()
     }
     func fetchCharacters(page: String = "", completionHandler: @escaping (_ response: Character, _ isEmpty: Bool) -> Void) {
-        print("Fetching character - ", page)
         let task = URLSession.shared.dataTask(with: URL(string: page)!) { data, _, error in
             if let error = error {
                 print("Error fetching data: \(error)")

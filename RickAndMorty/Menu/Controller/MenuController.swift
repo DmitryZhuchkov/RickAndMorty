@@ -13,22 +13,20 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        switch UIScreen.main.bounds.height {
-        case 0...499:
+        if UIScreen.main.bounds.width > UIScreen.main.bounds.height {
             return CGSize(width: UIScreen.main.bounds.width - UIScreen.main.bounds.width/10, height: UIScreen.main.bounds.width/2)
-        default:
+        } else {
             return CGSize(width: UIScreen.main.bounds.width - UIScreen.main.bounds.width/10, height: UIScreen.main.bounds.height/3.5)
         }
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return viewModel.data.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MenuCell", for: indexPath) as? MenuCell else {
             return MenuCell.init()
         }
         if let viewModelMark = viewModel.viewModelForMark(at: indexPath.row) {
-            print(indexPath.row)
             switch indexPath.row {
             case 0:
                 cell.index = 1
@@ -50,7 +48,6 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
         switch cell.sectionName.text {
         case "Characters":
             let nextVC = SectionsListController()
-            print(viewModel.data[indexPath.row].characters)
             nextVC.baseURL = viewModel.data[indexPath.row].characters
             viewModel.navigateToList(viewController: self, secName: "Characters", rootVC: nextVC)
         default:

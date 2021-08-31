@@ -10,14 +10,15 @@ import UIKit
 class SectionsListController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let deviceSize = UIScreen.main.bounds.size
-        if deviceSize.height < deviceSize.width {
-               let cellSize = sqrt(Double(deviceSize.width * deviceSize.height) / (Double(15)))
-                   return CGSize(width: cellSize, height: cellSize)
-        } else {
             let padding: CGFloat = 15
+        if deviceSize.width > deviceSize.height {
+            let collectionViewSize = deviceSize.height - padding
+                    return CGSize(width: collectionViewSize/2, height: collectionViewSize/2)
+        } else {
             let collectionViewSize = deviceSize.width - padding
                     return CGSize(width: collectionViewSize/2, height: collectionViewSize/2)
         }
+
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             return viewModel.results.count

@@ -40,12 +40,12 @@ class SectionsCell: UICollectionViewCell {
         self.addSubview(backWhite)
         backWhite.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         backWhite.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        backWhite.topAnchor.constraint(equalTo: self.centerYAnchor, constant: self.bounds.width/6 ).isActive = true
+        backWhite.topAnchor.constraint(equalTo: listImage.centerYAnchor, constant: self.bounds.height*0.25).isActive = true
         backWhite.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         self.addSubview(listName)
         listName.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         listName.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        listName.topAnchor.constraint(equalTo: self.centerYAnchor, constant: self.bounds.width/6 ).isActive = true
+        listName.topAnchor.constraint(equalTo: listImage.centerYAnchor, constant: self.bounds.height*0.25).isActive = true
         listName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true
