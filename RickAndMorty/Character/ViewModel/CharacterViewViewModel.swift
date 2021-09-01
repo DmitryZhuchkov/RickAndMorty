@@ -11,6 +11,7 @@ final class CharacterViewViewModel {
     init(character: Result) {
         self.character = character
     }
+    // MARK: Variable inits
     var charac: String {
         let name = character.name
         return name

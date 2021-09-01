@@ -7,18 +7,20 @@
 
 import Foundation
 import UIKit
+// MARK: Filter cell protocol
 protocol FilterCellDelegate: class {
     func didToggleRadioButton(_ indexPath: IndexPath)
 }
 
 class FilterCell: UITableViewCell {
     weak var delegate: FilterCellDelegate?
+    // MARK: Outlets init
     var categoryName: UILabel = {
         let section = UILabel()
         section.translatesAutoresizingMaskIntoConstraints = false
         section.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         section.numberOfLines = 1
-        section.textColor = .white
+        section.textColor = UIColor(named: "SectionTextColor")
         section.textAlignment = .center
         section.backgroundColor = .clear
         return section
@@ -26,11 +28,12 @@ class FilterCell: UITableViewCell {
     var categoryButton: UIButton = {
         let button = ButtonView()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "SectionTextColor")
         return button
     }()
+    // MARK: Cell constaints and methods init
     func initCellItem() {
-        self.contentView.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        self.contentView.backgroundColor = UIColor(named: "Background")
         self.addSubview(categoryButton)
         categoryButton.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         categoryButton.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
@@ -42,12 +45,13 @@ class FilterCell: UITableViewCell {
         categoryName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         categoryButton.addTarget(self, action: #selector(self.radioButtonTapped), for: .touchUpInside)
     }
+    // MARK: Cell tapped method
     @objc func radioButtonTapped(_ radioButton: UIButton) {
         let isSelected = !self.categoryButton.isSelected
         self.categoryButton.isSelected = isSelected
         if isSelected {
-            categoryName.textColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
-            categoryButton.backgroundColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
+            categoryName.textColor = UIColor(named: "TextColor")
+            categoryButton.backgroundColor = UIColor(named: "TextColor")
             self.setSelected(true, animated: false)
             deselectOtherButton()
         }
@@ -56,6 +60,7 @@ class FilterCell: UITableViewCell {
         let tappedCellIndexPath = tableView.indexPath(for: self)!
         delegate?.didToggleRadioButton(tappedCellIndexPath)
     }
+    // MARK: Deselecting other cell method
     func deselectOtherButton() {
         let tableView = self.superview as? UITableView
         let tappedCellIndexPath = tableView?.indexPath(for: self)!
@@ -66,16 +71,17 @@ class FilterCell: UITableViewCell {
                     return
                 }
                 cell.categoryButton.isSelected = false
-                cell.categoryButton.backgroundColor = .white
-                cell.categoryName.textColor = .white
+                cell.categoryButton.backgroundColor = UIColor(named: "SectionTextColor")
+                cell.categoryName.textColor = UIColor(named: "SectionTextColor")
             }
         }
     }
+    // MARK: Cell selected method
     func cellSelected() {
-
-        categoryName.textColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
-        categoryButton.backgroundColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
+        categoryName.textColor = UIColor(named: "TextColor")
+        categoryButton.backgroundColor =  UIColor(named: "TextColor")
     }
+    // MARK: Reset button tapped
     func resetButton() {
         self.categoryButton.isSelected = false
         self.categoryButton.backgroundColor = .white

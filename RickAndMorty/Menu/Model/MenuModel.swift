@@ -6,7 +6,7 @@
 //
 
 import Foundation
-// MARK: - MenuModel
+// MARK: MenuModel
 struct MenuModel: Codable {
     let characters, locations, episodes: String
 }

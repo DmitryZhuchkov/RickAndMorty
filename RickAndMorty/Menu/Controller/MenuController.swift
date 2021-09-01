@@ -8,8 +8,11 @@
 import UIKit
 
 class MenuController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    // MARK: Variables
     var menuCollectionView: UICollectionView!
     var viewModel = MenuViewModel()
+    var refreshControl = UIRefreshControl()
+    // MARK: Collection view protocol stubs
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -54,12 +57,12 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
             viewModel.navigateToList(viewController: self, secName: cell.sectionName.text ?? "Unknow", rootVC: EmptyPage())
         }
     }
-    var refreshControl = UIRefreshControl()
     override func viewDidLoad() {
         super.viewDidLoad()
+        // MARK: Navigation controller settings
         self.title = "Choose section"
         self.navigationItem.backButtonTitle = ""
-        self.view.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        self.view.backgroundColor = UIColor(named: "Background")
         // MARK: CollectionView layout init
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -68,17 +71,20 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
         menuCollectionView.showsHorizontalScrollIndicator = false
         menuCollectionView.dataSource = self
         menuCollectionView.delegate = self
-        menuCollectionView.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        menuCollectionView.backgroundColor = UIColor(named: "Background")
         menuCollectionView.register(MenuCell.self, forCellWithReuseIdentifier: "MenuCell")
         menuCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        // MARK: Collection view constaints
         view.addSubview(menuCollectionView)
         menuCollectionView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         menuCollectionView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         menuCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         menuCollectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        // MARK: Fetching menu data and adding refresh control
         viewModel.fetchMenu(collectionView: menuCollectionView)
         addRefreshControl()
     }
+    // MARK: RefreshControl init and animation
     func addRefreshControl() {
         guard let customView = Bundle.main.loadNibNamed("RefreshControlPickleRick", owner: nil, options: nil) else {
             return
@@ -89,8 +95,8 @@ class MenuController: UIViewController, UICollectionViewDelegate, UICollectionVi
         refreshView.frame = refreshControl.frame
 
         refreshControl.addSubview(refreshView)
-        refreshControl.tintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        refreshControl.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        refreshControl.tintColor = UIColor(named: "Background")
+        refreshControl.backgroundColor = UIColor(named: "Background")
         refreshControl.addTarget(self, action: #selector(refreshContents), for: .valueChanged)
         refreshView.tag = 12052018
         if #available(iOS 10.0, *) {

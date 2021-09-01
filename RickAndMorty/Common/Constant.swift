@@ -6,6 +6,7 @@
 //
 
 import Foundation
+// MARK: Constants
 final class Constant {
     static let shared = Constant()
     let baseURL = "https://rickandmortyapi.com/api"

@@ -8,25 +8,28 @@
 import Foundation
 import UIKit
 class MenuCell: UICollectionViewCell {
+    // MARK: Outlets init
     var sectionName: UILabel = {
         let section = UILabel()
         section.translatesAutoresizingMaskIntoConstraints = false
         section.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-        section.textColor = .black
+        section.textColor = UIColor(named: "Background")
         section.textAlignment = .center
         return section
     }()
     var sectionImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.alpha = 0.3
+        image.alpha = 0.4
         return image
     }()
     var index: Int = 4
     func configure(viewmodel: MenuViewViewModel) {
+        // MARK: Cell settings
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true
-        self.contentView.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        self.contentView.backgroundColor = UIColor(named: "SectionTextColor")
+        // MARK: Constaints
         self.addSubview(sectionImage)
         sectionImage.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         sectionImage.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
@@ -37,6 +40,7 @@ class MenuCell: UICollectionViewCell {
         sectionName.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         sectionName.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         sectionName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        // MARK: Cell configuration case
         switch index {
         case 1:
             sectionName.text = "Characters"

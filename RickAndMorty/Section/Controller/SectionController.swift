@@ -9,6 +9,9 @@ import Foundation
 import UIKit
 class SectionController: UIViewController {
     var dataResult: Result?
+    let scrollView = UIScrollView()
+    let contentView = UIView()
+    // MARK: Character image init
     var persImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -16,12 +19,13 @@ class SectionController: UIViewController {
         image.layer.masksToBounds = true
         return image
     }()
+    // MARK: Custom character label method
     func characterAttributesLabel(name: String, category: String) -> UILabel {
         let caterogyLabel: UILabel = {
             let text = UILabel()
             text.numberOfLines = 2
-            let nameAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 18, weight: .bold), .foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
-            let statusAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 18), .foregroundColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
+            let nameAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 18, weight: .bold), .foregroundColor: UIColor(named: "TextColor")!]
+            let statusAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 18), .foregroundColor: UIColor(named: "SectionTextColor")!]
             let nameText = NSMutableAttributedString(string: name + ": ", attributes: nameAttributes)
             let statusText = NSAttributedString(string: category, attributes: statusAttributes)
             nameText.append(statusText)
@@ -31,13 +35,12 @@ class SectionController: UIViewController {
         }()
         return caterogyLabel
     }
-    let scrollView = UIScrollView()
-    let contentView = UIView()
     override func viewDidLoad() {
+        // MARK: Navigation controller init
         self.title = dataResult?.name
-        self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
-        self.view.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        self.navigationController?.navigationBar.barTintColor = UIColor(named: "Background")
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(named: "TextColor")!]
+        self.view.backgroundColor = UIColor(named: "Background")
         setupScrollView()
         setupView()
         if  let imagePers = dataResult?.image {
@@ -45,6 +48,7 @@ class SectionController: UIViewController {
         }
     }
     func setupView() {
+        // MARK: Outlets constaints
         let name = characterAttributesLabel(name: "name", category: dataResult?.name ?? " ")
         let status = characterAttributesLabel(name: "status", category: dataResult?.status.rawValue ?? " ")
         let species = characterAttributesLabel(name: "species", category: dataResult?.species ?? " ")
@@ -78,6 +82,7 @@ class SectionController: UIViewController {
         type.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
     func setupScrollView() {
+        // MARK: Scroll constaints
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
@@ -91,6 +96,7 @@ class SectionController: UIViewController {
         contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
         contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
     }
+    // MARK: Image download methods
     func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }

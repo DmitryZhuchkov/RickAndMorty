@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 class SectionsListController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
+    // MARK: Collection view protocol stubs
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let deviceSize = UIScreen.main.bounds.size
             let padding: CGFloat = 15
@@ -38,12 +39,13 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         viewModel.navigateToSection(viewController: self, index: indexPath.row)
     }
+    // MARK: Text Field init
     var characterTextField: UITextField = {
         let field = UITextField()
         field.translatesAutoresizingMaskIntoConstraints = false
         field.placeholder = "Enter name"
         field.font = UIFont.systemFont(ofSize: 15)
-        field.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        field.textColor = UIColor(named: "SectionTextColor")
         field.borderStyle = UITextField.BorderStyle.roundedRect
         field.autocorrectionType = UITextAutocorrectionType.no
         field.keyboardType = UIKeyboardType.default
@@ -51,11 +53,12 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         field.clearButtonMode = UITextField.ViewMode.whileEditing
         field.contentVerticalAlignment = UIControl.ContentVerticalAlignment.center
         field.keyboardType = .asciiCapable
-        field.backgroundColor = #colorLiteral(red: 0.3114243746, green: 0.3254866004, blue: 0.3514238, alpha: 1)
+        field.backgroundColor = UIColor(named: "Background")
         field.clearButtonMode = .never
         field.resignFirstResponder()
         return field
     }()
+    // MARK: Variables
     let filterController = FilterController()
     var baseURL: String?
     var sectionsList: UICollectionView!
@@ -64,36 +67,40 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
     override func viewDidLoad() {
         viewModel.characterURL = baseURL ?? " "
         filterController.delegate = self
-        self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
+        characterTextField.delegate = self
+        // MARK: Navigation controller settings
+        self.navigationController?.navigationBar.barTintColor = UIColor(named: "Background")
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(named: "TextColor")!]
         self.navigationItem.backButtonTitle = ""
-        self.view.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        self.view.backgroundColor = UIColor(named: "Background")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "xd"), style: .plain, target: self, action: #selector(filter))
         navigationItem.rightBarButtonItem?.width = 10
-        characterTextField.delegate = self
+        // MARK: Collection view settings
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         sectionsList = UICollectionView(frame: view.frame, collectionViewLayout: layout)
         sectionsList.showsHorizontalScrollIndicator = false
         sectionsList.dataSource = self
         sectionsList.delegate = self
-        sectionsList.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        sectionsList.backgroundColor = UIColor(named: "Background")
         sectionsList.register(SectionsCell.self, forCellWithReuseIdentifier: "SectionsCell")
         sectionsList.translatesAutoresizingMaskIntoConstraints = false
         viewModel.searchForFieldAndFilter(collectionView: sectionsList)
         setupView()
     }
     func setupView() {
+        // MARK: Constaints
         view.addSubview(characterTextField)
         characterTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         characterTextField.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         characterTextField.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         view.addSubview(sectionsList)
         sectionsList.topAnchor.constraint(equalTo: characterTextField.bottomAnchor, constant: 15).isActive = true
-        sectionsList.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        sectionsList.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        sectionsList.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 2).isActive = true
+        sectionsList.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -2).isActive = true
         sectionsList.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
+    // MARK: Text field method
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let text = textField.text,
                  let textRange = Range(range, in: text) {
@@ -106,6 +113,7 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
               }
         return true
     }
+    // MARK: Pushing to filter controller method
     @objc func filter() {
         let filterController = FilterController()
         filterController.delegate = self
@@ -113,6 +121,7 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         self.navigationController?.pushViewController(filterController, animated: true)
     }
 }
+// MARK: Filter controller protocol stub
 extension SectionsListController: FilterControllerDelegate {
     func searchWithFilter(selected: [Int: String]) {
         viewModel.filters = selected

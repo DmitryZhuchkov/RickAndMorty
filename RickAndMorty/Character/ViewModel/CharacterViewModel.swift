@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 class CharacterViewModel {
+    // MARK: Variables
     var filters = [Int: String]()
     var results: [Result] = []
     var fieldCharacter: [Result] = []
@@ -16,16 +17,17 @@ class CharacterViewModel {
     var nameCharac = ""
     var fieldName: String?
     var isLastPage = false
+    // MARK: Fetching characters method
     func fetchCharacter(collectionView: UICollectionView) {
         NetworkManager.network.fetchCharacters(page: page) { result, empty  in
-            if result.info?.next == "null" {
+            if result.infoForPage?.next == "null" {
                 self.isLastPage = true
             } else if empty == false {
 
-                    self.results.append(contentsOf: result.results ?? [])
+                    self.results.append(contentsOf: result.resultsForCharacter ?? [])
             }
             if empty == false {
-            self.page = result.info?.next ?? "null"
+            self.page = result.infoForPage?.next ?? "null"
             }
             DispatchQueue.main.async {
                 collectionView.reloadData()
@@ -39,11 +41,13 @@ class CharacterViewModel {
                }
         return CharacterViewViewModel(character: results[index]  )
            }
+    // MARK: Pushing to section VC method
     func navigateToSection(viewController: UIViewController, index: Int) {
         let rootVC = SectionController()
         rootVC.dataResult = results[index]
         viewController.navigationController?.pushViewController(rootVC, animated: true)
     }
+    // MARK: Searching for using field and filter case
     func searchForFieldAndFilter(collectionView: UICollectionView) {
            if fieldName != "" {
             var searchUrl: String = ""
@@ -61,6 +65,7 @@ class CharacterViewModel {
         } else if fieldName == " " {
         }
     }
+    // MARK: URL preparation
     func urlWithFilters() -> String {
         var statusString = ""
         var genderString = ""

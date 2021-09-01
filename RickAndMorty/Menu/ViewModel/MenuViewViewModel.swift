@@ -8,9 +8,11 @@
 import Foundation
 final class MenuViewViewModel {
     private var menu: MenuModel
+    // MARK: Data init
     init(menu: MenuModel) {
         self.menu = menu
     }
+    // MARK: Variable init
     var charac: String {
         let name = menu.characters
         return name

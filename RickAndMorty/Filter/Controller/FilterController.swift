@@ -8,11 +8,13 @@
 import Foundation
 import UIKit
 
+// MARK: Filter protocol
 protocol FilterControllerDelegate: class {
     func searchWithFilter(selected: [Int: String])
 }
 
-class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSource, FilterCellDelegate {
+class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSource, FilterHeaderDelegate, FilterCellDelegate {
+    // MARK: TableView protocol stubs
     func numberOfSections( in tableView: UITableView) -> Int {
         return viewModel.menuList.count
     }
@@ -50,37 +52,42 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
     var viewModel = FilterViewModel()
     weak var delegate: FilterControllerDelegate?
     var selectedItem = [Int: String]()
+    // MARK: Outlets init
     let filterList: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(FilterCell.self, forCellReuseIdentifier: "filterCell")
-        tableView.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        tableView.backgroundColor = UIColor(named: "Background")
+        tableView.separatorStyle = .none
         return tableView
     }()
     let applyButton: UIButton = {
         let apply = UIButton()
         apply.translatesAutoresizingMaskIntoConstraints = false
         apply.contentVerticalAlignment = UIControl.ContentVerticalAlignment.center
-        apply.setTitleColor(#colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1), for: .normal)
+        apply.setTitleColor(UIColor(named: "TextColor"), for: .normal)
         apply.setTitle("Apply Filters", for: .normal)
         apply.backgroundColor = .none
         apply.layer.cornerRadius = 10
         apply.layer.masksToBounds = true
         apply.layer.borderWidth = 1
-        apply.layer.borderColor = #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)
+        apply.layer.borderColor = UIColor(named: "TextColor")?.cgColor
         return apply
     }()
     override func viewDidLoad() {
-        self.navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.7113551497, green: 0.853392005, blue: 0.2492054403, alpha: 1)]
-        self.view.backgroundColor = #colorLiteral(red: 0.1379833519, green: 0.1568788886, blue: 0.1870329976, alpha: 1)
+        // MARK: Navigation controller settings
+        self.navigationController?.navigationBar.barTintColor = UIColor(named: "Background")
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(named: "TextColor")!]
+        self.view.backgroundColor = UIColor(named: "Background")
         applyButton.addTarget(self, action: #selector(applyChanges), for: .touchUpInside)
+        // MARK: TableView settings
         filterList.dataSource = self
         filterList.delegate = self
         filterList.register(FilterHeader.self, forHeaderFooterViewReuseIdentifier: "FilterHeader")
         setupView()
     }
     func setupView() {
+        // MARK: Constaints
         view.addSubview(filterList)
         filterList.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         filterList.leftAnchor.constraint(equalTo: view.leftAnchor, constant: UIScreen.main.bounds.width/9.5).isActive = true
@@ -91,10 +98,12 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         applyButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -UIScreen.main.bounds.width/12).isActive = true
         applyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -UIScreen.main.bounds.height/25).isActive = true
     }
+    // MARK: Apply button method
     @objc func applyChanges() {
         delegate?.searchWithFilter(selected: selectedItem)
         navigationController?.popViewController(animated: true)
     }
+   // MARK: Protocol FilterCell stubs realize
     func didToggleRadioButton(_ indexPath: IndexPath) {
         let section = indexPath.section
         guard let header = filterList.headerView(forSection: section) as? FilterHeader else {
@@ -109,8 +118,6 @@ class FilterController: UIViewController, UITableViewDelegate, UITableViewDataSo
         selectedItem.updateValue(data, forKey: section)
         header.headerButton.setTitleColor(#colorLiteral(red: 0.9664108157, green: 0.1161905304, blue: 0.3387114406, alpha: 1), for: .normal)
     }
-}
-extension FilterController: FilterHeaderDelegate {
     func resetButton(tag: Int) {
         for cell in 0...viewModel.menuList[tag].count-1 {
             let indexPath: IndexPath = [tag, cell]

@@ -8,11 +8,12 @@
 import Foundation
 import UIKit
 class SectionsCell: UICollectionViewCell {
+    // MARK: Outlets init
     var listName: UILabel = {
         let section = UILabel()
         section.translatesAutoresizingMaskIntoConstraints = false
         section.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        section.textColor = .black
+        section.textColor = UIColor(named: "Background")
         section.textAlignment = .center
         section.backgroundColor = .clear
         return section
@@ -21,7 +22,7 @@ class SectionsCell: UICollectionViewCell {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.alpha = 0.5
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "SectionTextColor")
         return view
     }()
     var listImage: UIImageView = {
@@ -30,8 +31,10 @@ class SectionsCell: UICollectionViewCell {
         return image
     }()
     func config(viewModel: CharacterViewViewModel) {
+        // MARK: Cell outlets settings
         listName.text = viewModel.charac
         downloadImage(from: viewModel.imageURL)
+        // MARK: Constaints
         self.addSubview(listImage)
         listImage.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         listImage.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
@@ -47,9 +50,11 @@ class SectionsCell: UICollectionViewCell {
         listName.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         listName.topAnchor.constraint(equalTo: listImage.centerYAnchor, constant: self.bounds.height*0.25).isActive = true
         listName.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        // MARK: Cell settings
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true
     }
+    // MARK: Downloading image from URL methods
     func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }

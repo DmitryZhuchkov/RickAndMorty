@@ -6,6 +6,7 @@
 //
 
 import Foundation
+// MARK: Menu list
 class FilterViewModel {
     let menuList = [ ["Alive", "Dead", "Unknown"],
                      ["Female", "Male", "Genderless", "unknown"] ]

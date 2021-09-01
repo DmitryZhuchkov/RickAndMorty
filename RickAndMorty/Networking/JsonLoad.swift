@@ -9,6 +9,7 @@ import Foundation
 class NetworkManager {
     static let network = NetworkManager()
     var emptyResult: Character?
+    // MARK: Fetching menu
     func fetchMenu(completionHandler: @escaping (_ response: MenuModel) -> Void) {
         let baseURL = URL(string: Constant.shared.baseURL)!
         let task = URLSession.shared.dataTask(with: baseURL) { data, _, error in
@@ -30,6 +31,7 @@ class NetworkManager {
         }
         task.resume()
     }
+    // MARK: Fetching characters
     func fetchCharacters(page: String = "", completionHandler: @escaping (_ response: Character, _ isEmpty: Bool) -> Void) {
         let task = URLSession.shared.dataTask(with: URL(string: page)!) { data, _, error in
             if let error = error {

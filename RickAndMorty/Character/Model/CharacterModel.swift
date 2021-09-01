@@ -9,11 +9,11 @@ import Foundation
 
 // MARK: - Character
 struct Character: Codable {
-    let info: Info?
-    let results: [Result]?
+    let infoForPage: Info?
+    let resultsForCharacter: [Result]?
     enum CodingKeys: String, CodingKey {
-            case info = "info"
-            case results = "results"
+            case infoForPage = "info"
+            case resultsForCharacter = "results"
         }
 }
 
