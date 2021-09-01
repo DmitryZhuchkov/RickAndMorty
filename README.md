@@ -4,7 +4,8 @@
 
 Главный экран для Dark mode:
 
-<img width="350" alt="Снимок экрана 2021-08-31 в 14 52 00" src="https://user-images.githubusercontent.com/68297992/131740206-7dbd0bd7-458f-4c96-b839-a6088cd363c6.png">
+<img width="353" alt="Снимок экрана 2021-09-01 в 22 32 35" src="https://user-images.githubusercontent.com/68297992/131740900-af7440af-0f9a-4736-af5f-e18ec3524494.png">
+
 
 Главный экран для Light mode:
 
