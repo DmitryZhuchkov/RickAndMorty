@@ -7,6 +7,8 @@
 
 import Foundation
 import UIKit
+import RxSwift
+import RxCocoa
 class SectionsListController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
     // MARK: Collection view protocol stubs
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -22,16 +24,28 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
 
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return viewModel.results.count
+            return viewModel.numberOfCharactres
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            if !viewModel.isLastPage && indexPath.row == viewModel.results.count - 1 {
-                viewModel.fetchCharacter(collectionView: sectionsList)
+        if !viewModel.isLastPage && indexPath.row == viewModel.numberOfCharactres - 1 {
+                DispatchQueue.global(qos: .background).async {
+                    self.viewModel.fetchHeroes()
+                       }
+                viewModel.characters.drive(onNext: {[unowned self] (_) in
+                           self.sectionsList.reloadData()
+                       }).disposed(by: bag)
+                viewModel.isFetching.drive()
+                           .disposed(by: bag)
+                       
+                viewModel.error.drive(onNext: { (error) in
+                    print("Error = ",error as Any)
+                       }).disposed(by: bag)
+                
             }
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SectionsCell", for: indexPath) as? SectionsCell else {
                 return SectionsCell.init()
             }
-            if let viewModelMark = viewModel.viewModelForMark(at: indexPath.row) {
+            if let viewModelMark = viewModel.viewModelForHero(at: indexPath.row) {
                 cell.config(viewModel: viewModelMark)
             }
             return cell
@@ -62,10 +76,10 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
     let filterController = FilterController()
     var baseURL: String?
     var sectionsList: UICollectionView!
-    var viewModel = CharacterViewModel()
+    let bag = DisposeBag()
+    var viewModel: CharacterViewModel!
     var filterViewModel = FilterViewModel()
     override func viewDidLoad() {
-        viewModel.characterURL = baseURL ?? " "
         filterController.delegate = self
         characterTextField.delegate = self
         // MARK: Navigation controller settings
@@ -85,7 +99,21 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
         sectionsList.backgroundColor = UIColor(named: "Background")
         sectionsList.register(SectionsCell.self, forCellWithReuseIdentifier: "SectionsCell")
         sectionsList.translatesAutoresizingMaskIntoConstraints = false
-        viewModel.searchForFieldAndFilter(collectionView: sectionsList)
+        // MARK: RxSwift init
+        viewModel = CharacterViewModel(appService: NetworkManager.network)
+        viewModel.characterURL = baseURL ?? " "
+               DispatchQueue.global(qos: .background).async {
+                   self.viewModel.searchForFieldAndFilter()
+                      }
+               viewModel.characters.drive(onNext: {[unowned self] (_) in
+                          self.sectionsList.reloadData()
+                      }).disposed(by: bag)
+               viewModel.isFetching.drive()
+                          .disposed(by: bag)
+                      
+               viewModel.error.drive(onNext: { (error) in
+                   print("Error = ",error as Any)
+                      }).disposed(by: bag)
         setupView()
     }
     func setupView() {
@@ -109,7 +137,7 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
                  } else {
                     viewModel.fieldName = text.replacingCharacters(in: textRange, with: string)
                  }
-                 viewModel.searchForFieldAndFilter(collectionView: sectionsList)
+                 viewModel.searchForFieldAndFilter()
               }
         return true
     }
@@ -125,6 +153,6 @@ class SectionsListController: UIViewController, UICollectionViewDelegate, UIColl
 extension SectionsListController: FilterControllerDelegate {
     func searchWithFilter(selected: [Int: String]) {
         viewModel.filters = selected
-        viewModel.searchForFieldAndFilter(collectionView: sectionsList)
+        viewModel.searchForFieldAndFilter()
         }
 }

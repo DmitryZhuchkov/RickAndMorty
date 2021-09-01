@@ -7,6 +7,8 @@
 
 import Foundation
 import UIKit
+import RxSwift
+import RxCocoa
 class CharacterViewModel {
     // MARK: Variables
     var filters = [Int: String]()
@@ -17,30 +19,58 @@ class CharacterViewModel {
     var nameCharac = ""
     var fieldName: String?
     var isLastPage = false
-    // MARK: Fetching characters method
-    func fetchCharacter(collectionView: UICollectionView) {
-        NetworkManager.network.fetchCharacters(page: page) { result, empty  in
-            if result.infoForPage?.next == "null" {
-                self.isLastPage = true
-            } else if empty == false {
+    private let appService: NetworkManager
+    private let disposeBag = DisposeBag()
+    init(appService: NetworkManager) {
+         self.appService = appService
 
-                    self.results.append(contentsOf: result.resultsForCharacter ?? [])
-            }
-            if empty == false {
-            self.page = result.infoForPage?.next ?? "null"
-            }
-            DispatchQueue.main.async {
-                collectionView.reloadData()
-            }
      }
-    }
-    // MARK: Data checking
-       func viewModelForMark(at index: Int) -> CharacterViewViewModel? {
-        guard index < results.count else {
-                   return nil
-               }
-        return CharacterViewViewModel(character: results[index]  )
-           }
+     
+     private let _characters = BehaviorRelay<[Result]>(value: [])
+     private let _isFetching = BehaviorRelay<Bool>(value: false)
+     private let _error = BehaviorRelay<String?>(value: nil)
+   
+     var isFetching: Driver<Bool> {
+         return _isFetching.asDriver()
+     }
+     
+     var characters: Driver<[Result]> {
+         return _characters.asDriver()
+     }
+     
+     var error: Driver<String?> {
+         return _error.asDriver()
+     }
+     
+     var hasError: Bool {
+         return _error.value != nil
+     }
+     var numberOfCharactres: Int {
+         return _characters.value.count
+     }
+     
+     func viewModelForHero(at index: Int) -> CharacterViewViewModel? {
+         guard index < _characters.value.count else {
+             return nil
+         }
+         return CharacterViewViewModel(character: _characters.value[index])
+     }
+ // MARK: Fetch heroes from internet
+     func fetchHeroes() {
+         self._characters.accept([])
+         self._isFetching.accept(true)
+         self._error.accept(nil)
+         NetworkManager.network.fetchCharacters(page: page, completionHandler: { [weak self] response,empty  in
+             if response.infoForPage?.next == "null" {
+                 self?.isLastPage = true
+             } else if empty == false {
+                 self?._characters.accept(response.resultsForCharacter ?? [])
+             }
+             if empty == false {
+                 self?.page = response.infoForPage?.next ?? "null"
+             }
+      })
+     }
     // MARK: Pushing to section VC method
     func navigateToSection(viewController: UIViewController, index: Int) {
         let rootVC = SectionController()
@@ -48,7 +78,7 @@ class CharacterViewModel {
         viewController.navigationController?.pushViewController(rootVC, animated: true)
     }
     // MARK: Searching for using field and filter case
-    func searchForFieldAndFilter(collectionView: UICollectionView) {
+    func searchForFieldAndFilter() {
            if fieldName != "" {
             var searchUrl: String = ""
             if let field = fieldName {
@@ -61,7 +91,7 @@ class CharacterViewModel {
             }
             page = searchUrl
             self.results.removeAll()
-            fetchCharacter(collectionView: collectionView)
+            fetchHeroes()
         } else if fieldName == " " {
         }
     }
